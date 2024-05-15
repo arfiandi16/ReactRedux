@@ -5,15 +5,17 @@ import { useEffect, useState } from 'react';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import Firebase from '../../firebaseConfig';
 import {Ionicons} from '@expo/vector-icons';
-import { Pressable, Text } from 'react-native';
+import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import NotesScreen from '../features/main/screen/NotesScreen';
+import { colors } from '../theme';
 
 
 const Stack = createNativeStackNavigator();
 
 const StackNavigator = () => {
     const [user,setUser] = useState(null);
+    const [loading,setLoading] = useState(true);
     const navigation = useNavigation();
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(Firebase.auth, (user) => {
@@ -23,9 +25,22 @@ const StackNavigator = () => {
             else {
                 setUser(null);
             }
+            setLoading(false);
         })
         return () => unsubscribe();
     },[]);
+
+    if(loading){
+        return(
+            <View style={{
+                flex : 1,
+                justifyContent: 'center',
+                alignItems: 'center'
+            }}>
+                <ActivityIndicator size='small' color={colors.primary.blue}/>
+            </View>
+        )
+    }
 
     const signOutHandler = async () => {
         try {

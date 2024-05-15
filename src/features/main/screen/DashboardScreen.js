@@ -1,21 +1,53 @@
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, Alert } from "react-native";
 import { colors, sizes } from "../../../theme";
+import { useDispatch, useSelector } from "react-redux";
+import { deleteNote } from "../../../store/actions/noteActions";
 
 const DashboardScreen = () => {
-    return (
-       <View style={styles.container}>
+    const notes = useSelector((state) => state.notes.notes);
+    const dispatch = useDispatch();
+    console.log(notes);
+
+    const onDelete = () => {
+        
+    }
+
+    const noteRender = (item) => (
         <TouchableOpacity style={styles.card}>
-            <Text style={styles.title}>What is Lorem Ipsum?</Text>
-            <Text style={styles.description}>Loahsdbdjb hjbasj bjb asjb hjasbjb a asb d asbj bashjb hjsbhjas bjbasd jbadsj bhjadsb hjbasd bhjsadb hjbadsj bjas hjbads jbj abjb jabs bhj bhjas bhjbas badsbhjabhj bas hjbadsj dbhjabs hjbhja bj bashjbhj adsjh sabhjbsabjba jbadsj bhjdbsa jbjsa bjabs hjas </Text>
+            <Text style={styles.title}>{item.title}</Text>
+            <Text style={styles.description}>{item.description}</Text>
+            <TouchableOpacity onPress={() => Alert.alert(
+            'Delete Note?',
+            'Are you sure ?',
+            [
+                {
+                    text:'Cancel',
+                    onPress: () => {},
+                    style: 'cancel'
+                },
+                {
+                    text:'OK',
+                    onPress: () => {dispatch(deleteNote(item.id))}
+                }
+            ]
+        )}> 
+            <Text>Delete</Text>
+            </TouchableOpacity>
         </TouchableOpacity>
-           
-       </View> 
+    );
+    return ( 
+            <FlatList 
+                data={notes}
+                contentContainerStyle={styles.container}
+                keyExtractor={(item,index) => index.toString()}
+                renderItem={({item}) => noteRender(item)}
+            />
+            
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
+    container: { 
         padding: sizes.xl2/2
     },
     card : {
